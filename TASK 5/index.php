@@ -76,26 +76,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $get->bindParam(1,$_SESSION['uid']);
       $get->execute();
       $inf=$get->fetchALL();
-      $values['fio']=$inf[0]['fio'];
+      $values['fio']=$inf[0]['name'];
       $values['email']=$inf[0]['email'];
       $values['year']=$inf[0]['year'];
       $values['gender']=$inf[0]['gender'];
-      $values['bodyparts']=$inf[0]['bodyparts'];
-      $values['bio']=$inf[0]['bio'];
+      $values['bodyparts']=$inf[0]['limbs'];
+      $values['bio']=$inf[0]['biography'];
 
       $get2=$db->prepare("select ability_id from ability_application where application_id=?");
       $get2->bindParam(1,$_SESSION['uid']);
       $get2->execute();
       $inf2=$get2->fetchALL();
       for($i=0;$i<count($inf2);$i++){
-        if($inf2[$i]['power_id']=='1'){
+        if($inf2[$i]['ability_id']=='1'){
           $values['1']=1;
         }
-        if($inf2[$i]['power_id']=='2'){
+        if($inf2[$i]['ability_id']=='2'){
           $values['2']=1;
         }
-        if($inf2[$i]['power_id']=='3'){
+        if($inf2[$i]['ability_id']=='3'){
           $values['3']=1;
+        }
+		if($inf2[$i]['ability_id']=='4'){
+          $values['4']=1;
         }
       }
     }
@@ -105,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     printf('Вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
   }
-  
   include('form.php');
 }
 else{
@@ -212,7 +214,6 @@ if ($errors) {
     $upd->execute(array($_POST['fio'],$_POST['email'],$_POST['year'],$_POST['gender'],$_POST['bodyparts'],$_POST['bio'],$id));
     $del=$db->prepare("delete from ability_application where application_id=?");
     $del->execute(array($id));
-    $upd1=$db->prepare("insert into ability_application set ability_id=?,application_id=?");
 	  $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
 	  foreach ($_POST['ability'] as $ability) {
 		$stmt->execute([$app_id,$ability ]);
@@ -235,10 +236,11 @@ if ($errors) {
         //  $pwr->execute(array($power,$id));
         //}
 		  $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
+
   foreach ($_POST['ability'] as $ability) {
     $stmt->execute([$app_id,$ability ]);
   }
-        $usr=$db->prepare("insert into users set id=?,login=?,password_hash=?");
+        $usr=$db->prepare("insert into users set application_id=?,login=?,password_hash=?");
         $usr->execute(array($app_id,$login,$hashed));
       }
       catch(PDOException $e){

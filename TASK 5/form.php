@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-    <title>Task 5	</title>
+    <title>Task 6	</title>
     <link rel="stylesheet" href="style1.css">
 </head>
 <body>
@@ -83,7 +83,7 @@ if (!empty($messages)) {
       <br />
       <select name="ability[]"
           multiple="multiple" <?php print($errors['ability'] ? 'class="error"' : '');?>>
-          <option value="1" selected ="selected">none</option>
+          <option value="1" <?php print(in_array('1', $values['ability']) ? 'selected ="selected"' : '');?>>none</option>
           <option value="2" <?php print(in_array('2', $values['ability']) ? 'selected ="selected"' : '');?>>immortality</option>
           <option value="3" <?php print(in_array('3', $values['ability']) ? 'selected ="selected"' : '');?>>invisibility</option>
           <option value="4" <?php print(in_array('4', $values['ability']) ? 'selected ="selected"' : '');?>>levitation</option>
@@ -92,9 +92,7 @@ if (!empty($messages)) {
       <label>
       Биография<br />
         <textarea name="bio"
-        <?php print($errors['bio'] ? 'class="error"' : '');?>
-        value = "<?php print $values['bio'];?>"
-        ></textarea>
+        <?php print($errors['bio'] ? 'class="error"' : '');?>><?php print $values['bio'];?></textarea>
         </label><br />
         
       <label><input type="checkbox" checked="checked"
