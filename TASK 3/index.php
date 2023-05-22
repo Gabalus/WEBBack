@@ -3,49 +3,6 @@ header('Content-Type: text/html; charset=UTF-8');
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-  if (!empty($_GET['save'])) {
-
-    print('Спасибо, результаты сохранены.');
-  }
-
-  include('form.php');
-
-  exit();
-}
-
-$errors = FALSE;
-if (empty($_POST['fio'])) {
-  print('Заполните имя.<br/>');
-  $errors = TRUE;
-}
-
-if (empty($_POST['year']) || !is_numeric($_POST['year']) || !preg_match('/^\d+$/', $_POST['year'])) {
-  print('Заполните год.<br/>');
-  $errors = TRUE;
-}
-
-if (empty($_POST['email']) || !preg_match('/^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u',$_POST['email'])) {
-  print('Заполните email.<br/>');
-  $errors = TRUE;
-}
-
-if (empty($_POST['gender']) || ($_POST['gender']!='m' && $_POST['gender']!='w')) {
-  print('Заполните пол.<br/>');
-  $errors = TRUE;
-}
-if (empty($_POST['limbs']) || ($_POST['limbs']!='1' && $_POST['limbs']!='2' && $_POST['limbs']!='3' && $_POST['limbs']!='4')) {
-  print('Заполните количество конечностей.<br/>');
-  $errors = TRUE;
-}
-
-if (empty($_POST['biography']) || !preg_match('/^([0-9a-zA-Zа-яА-Я\,\.\s]{1,})$/', $_POST['biography']) ){
-  print('Заполните биографию.<br/>');
-  $errors = TRUE;
-}
-
-header('Content-Type: text/html; charset=UTF-8');
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -79,7 +36,7 @@ if (empty($_POST['gender']) || ($_POST['gender']!='m' && $_POST['gender']!='w'))
   print('Заполните пол.<br/>');
   $errors = TRUE;
 }
-if (empty($_POST['bodyparts']) || ($_POST['bodyparts']!='1' && $_POST['bodyparts']!='2' && $_POST['bodyparts']!='3' && $_POST['bodyparts']!='4')) {
+if (empty($_POST['bodyparts']) || ($_POST['bodyparts']!='2' && $_POST['bodyparts']!='3' && $_POST['bodyparts']!='4')) {
   print('Заполните количество конечностей.<br/>');
   $errors = TRUE;
 }
