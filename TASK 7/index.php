@@ -128,9 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   
 }
 else{
-if ($_SESSION['csrf_token'] !== $_POST['token']) {
-  die('Invalid CSRF token');
-}
+
 if (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) !== 'u53001.kubsu-dev.ru') {
   die('Invalid referer');
 }
@@ -139,6 +137,9 @@ if (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) !== 'u53001.kubsu-dev.ru')
     header('Location: index.php');
   }
   else{
+	  if ($_SESSION['csrf_token'] !== $_POST['token']) {
+  die('Invalid CSRF token');
+}
     $regex_name='/[a-z,A-Z,а-я,А-Я,-]*$/';
     $regex_email='/[a-z]+\w*@[a-z]+\.[a-z]{2,4}$/';
 	
@@ -245,9 +246,9 @@ if ($errors) {
     if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login']) and !$errors) {
     $app_id=$_SESSION['uid'];
     $upd=$db->prepare("update application set name=?,email=?,year=?,gender=?,limbs=?,biography=? where id=?");
-    $upd->execute(array(filter_input_data($_POST['fio']),filter_input_data($_POST['email']),filter_input_data($_POST['year']),filter_input_data($_POST['gender']),filter_input_data($_POST['bodyparts']),filter_input_data($_POST['bio']),$id));
+    $upd->execute(array(filter_input_data($_POST['fio']),filter_input_data($_POST['email']),filter_input_data($_POST['year']),filter_input_data($_POST['gender']),filter_input_data($_POST['bodyparts']),filter_input_data($_POST['bio']),$app_id));
     $del=$db->prepare("delete from ability_application where application_id=?");
-    $del->execute(array($id));
+    $del->execute(array($app_id));
 	  $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
 	  foreach ($_POST['ability'] as $ability) {
 		$stmt->execute([$app_id,filter_input_data($ability) ]);

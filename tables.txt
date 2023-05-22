@@ -20,3 +20,9 @@ CREATE TABLE admins (
   PRIMARY KEY (id)
 );
 insert admins(login,password) values('admin',123);
+
+set foreign_key_checks = 0;
+truncate application;
+truncate users;
+truncate ability_application;
+set foreign_key_checks = 1;
