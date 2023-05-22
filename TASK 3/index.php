@@ -32,7 +32,7 @@ if (empty($_POST['email']) || !preg_match('/^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-
   $errors = TRUE;
 }
 
-if (empty($_POST['gender']) || ($_POST['gender']!='m' && $_POST['gender']!='w')) {
+if (empty($_POST['gender']) || ($_POST['gender']!='m' && $_POST['gender']!='f')) {
   print('Заполните пол.<br/>');
   $errors = TRUE;
 }
