@@ -255,7 +255,7 @@ if ($errors) {
   foreach ($_POST['ability'] as $ability) {
     $stmt->execute([$app_id,$ability ]);
   }
-        $usr=$db->prepare("insert into users set id=?,login=?,password_hash=?");
+$usr=$db->prepare("insert into users set application_id=?,login=?,password_hash=?");
         $usr->execute(array($app_id,$login,$hashed));
       }
       catch(PDOException $e){
