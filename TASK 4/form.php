@@ -4,10 +4,23 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <title>Task 4</title>
     <link rel="stylesheet" href="style1.css">
+		<style>
+	.error {
+    background-color: red;
+}
+</style>
 </head>
 <body>
+<?php
+if (!empty($messages)) {
+  print('<div id="messages">');
+  foreach ($messages as $message) {
+    print($message);
+  }
+  print('</div>');
+}
+?>
 <div id = "form">
-
   <form action=""
     method="POST">
 
@@ -82,11 +95,10 @@
       Биография<br />
         <textarea name="bio"
         <?php print($errors['bio'] ? 'class="error"' : '');?>
-        value = "<?php print $values['bio'];?>"
-        ></textarea>
+        ><?php print $values['bio'];?></textarea>
         </label><br />
         
-      <label><input type="checkbox" checked="checked"
+      <label><input type="checkbox"
         name="check" />
         Ознакомился</label>
 

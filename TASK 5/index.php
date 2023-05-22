@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $errors['bodyparts'] = !empty($_COOKIE['bodyparts_error']);
   $errors['ability'] = !empty($_COOKIE['ability_error']);
   $errors['bio'] = !empty($_COOKIE['bio_error']);
+  $errors['check'] = !empty($_COOKIE['check_error']);
 
   if ($errors['fio']) {
     setcookie('fio_error', '', 100000);
@@ -56,6 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     setcookie('bio_error', '', 100000);
     $messages[] = '<div class="error">Заполните биографию.</div>';
   }
+      if ($errors['check']) {
+    setcookie('check_error', '', 100000);
+    $messages[] = '<div class="error">Ознакомьтесь с соглашением.</div>';
+  }
 
   $values = array();
   $values['fio'] = empty($_COOKIE['fio_value']) ? '' : $_COOKIE['fio_value'];
@@ -65,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $values['bodyparts'] = empty($_COOKIE['bodyparts_value']) ? '' : $_COOKIE['bodyparts_value'];
   $values['ability'] = empty($_COOKIE['ability_value']) ? array() : json_decode($_COOKIE['ability_value']);
   $values['bio'] = empty($_COOKIE['bio_value']) ? '' : $_COOKIE['bio_value'];
+  $values['check'] = empty($_COOKIE['check_value']) ? '' : $_COOKIE['check_value'];
 
   if (empty($errors) && !empty($_COOKIE[session_name()]) &&
       !empty($_SESSION['login'])) {
@@ -76,29 +82,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $get->bindParam(1,$_SESSION['uid']);
       $get->execute();
       $inf=$get->fetchALL();
-      $values['fio']=$inf[0]['name'];
+      $values['fio']=$inf[0]['fio'];
       $values['email']=$inf[0]['email'];
       $values['year']=$inf[0]['year'];
       $values['gender']=$inf[0]['gender'];
-      $values['bodyparts']=$inf[0]['limbs'];
-      $values['bio']=$inf[0]['biography'];
+      $values['bodyparts']=$inf[0]['bodyparts'];
+      $values['bio']=$inf[0]['bio'];
 
       $get2=$db->prepare("select ability_id from ability_application where application_id=?");
       $get2->bindParam(1,$_SESSION['uid']);
       $get2->execute();
       $inf2=$get2->fetchALL();
       for($i=0;$i<count($inf2);$i++){
-        if($inf2[$i]['ability_id']=='1'){
+        if($inf2[$i]['power_id']=='1'){
           $values['1']=1;
         }
-        if($inf2[$i]['ability_id']=='2'){
+        if($inf2[$i]['power_id']=='2'){
           $values['2']=1;
         }
-        if($inf2[$i]['ability_id']=='3'){
+        if($inf2[$i]['power_id']=='3'){
           $values['3']=1;
-        }
-		if($inf2[$i]['ability_id']=='4'){
-          $values['4']=1;
         }
       }
     }
@@ -108,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     printf('Вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
   }
+  
   include('form.php');
 }
 else{
@@ -192,6 +196,16 @@ else {
   setcookie('bio_error', '', time() + 24 * 60 * 60);
 }
 
+if (!isset($_POST['check'])) {
+    setcookie('check_error', '1', time() + 24 * 60 * 60);
+	setcookie('check_value', '', time() + 30 * 24 * 60 * 60);
+    $errors = TRUE;
+}
+else {
+  setcookie('check_value', $_POST['check'], time() + 30 * 24 * 60 * 60);
+    setcookie('check_error', '', time() + 24 * 60 * 60);
+}
+
 if ($errors) {
 	setcookie('save','',100000);
     header('Location: login.php');
@@ -203,6 +217,7 @@ if ($errors) {
       setcookie('gender_error', '', 100000);
       setcookie('bodyparts_error', '', 100000);
       setcookie('ability_error', '', 100000);
+	  setcookie('check_error', '', 100000);
     }
 	
 	$user = 'u53001';
@@ -214,6 +229,7 @@ if ($errors) {
     $upd->execute(array($_POST['fio'],$_POST['email'],$_POST['year'],$_POST['gender'],$_POST['bodyparts'],$_POST['bio'],$id));
     $del=$db->prepare("delete from ability_application where application_id=?");
     $del->execute(array($id));
+    $upd1=$db->prepare("insert into ability_application set ability_id=?,application_id=?");
 	  $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
 	  foreach ($_POST['ability'] as $ability) {
 		$stmt->execute([$app_id,$ability ]);
@@ -236,11 +252,10 @@ if ($errors) {
         //  $pwr->execute(array($power,$id));
         //}
 		  $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
-
   foreach ($_POST['ability'] as $ability) {
     $stmt->execute([$app_id,$ability ]);
   }
-        $usr=$db->prepare("insert into users set application_id=?,login=?,password_hash=?");
+        $usr=$db->prepare("insert into users set id=?,login=?,password_hash=?");
         $usr->execute(array($app_id,$login,$hashed));
       }
       catch(PDOException $e){

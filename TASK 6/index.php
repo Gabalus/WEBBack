@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $errors['bodyparts'] = !empty($_COOKIE['bodyparts_error']);
   $errors['ability'] = !empty($_COOKIE['ability_error']);
   $errors['bio'] = !empty($_COOKIE['bio_error']);
+  $errors['check'] = !empty($_COOKIE['check_error']);
 
   if ($errors['fio']) {
     setcookie('fio_error', '', 100000);
@@ -56,6 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     setcookie('bio_error', '', 100000);
     $messages[] = '<div class="error">Заполните биографию.</div>';
   }
+        if ($errors['check']) {
+    setcookie('check_error', '', 100000);
+    $messages[] = '<div class="error">Ознакомьтесь с соглашением.</div>';
+  }
 
   $values = array();
   $values['fio'] = empty($_COOKIE['fio_value']) ? '' : $_COOKIE['fio_value'];
@@ -65,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $values['bodyparts'] = empty($_COOKIE['bodyparts_value']) ? '' : $_COOKIE['bodyparts_value'];
   $values['ability'] = empty($_COOKIE['ability_value']) ? array() : json_decode($_COOKIE['ability_value']);
   $values['bio'] = empty($_COOKIE['bio_value']) ? '' : $_COOKIE['bio_value'];
+    $values['check'] = empty($_COOKIE['check_value']) ? '' : $_COOKIE['check_value'];
 
   if (empty($errors) && !empty($_COOKIE[session_name()]) &&
       !empty($_SESSION['login'])) {
@@ -192,6 +198,16 @@ else {
   setcookie('bio_error', '', time() + 24 * 60 * 60);
 }
 
+if (!isset($_POST['check'])) {
+    setcookie('check_error', '1', time() + 24 * 60 * 60);
+	setcookie('check_value', '', time() + 30 * 24 * 60 * 60);
+    $errors = TRUE;
+}
+else {
+  setcookie('check_value', $_POST['check'], time() + 30 * 24 * 60 * 60);
+    setcookie('check_error', '', time() + 24 * 60 * 60);
+}
+
 if ($errors) {
 	setcookie('save','',100000);
     header('Location: login.php');
@@ -203,6 +219,7 @@ if ($errors) {
       setcookie('gender_error', '', 100000);
       setcookie('bodyparts_error', '', 100000);
       setcookie('ability_error', '', 100000);
+	  	  setcookie('check_error', '', 100000);
     }
 	
 	$user = 'u53001';

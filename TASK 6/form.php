@@ -4,6 +4,11 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <title>Task 6	</title>
     <link rel="stylesheet" href="style1.css">
+		<style>
+	.error {
+    background-color: red;
+}
+</style>
 </head>
 <body>
 
@@ -95,7 +100,7 @@ if (!empty($messages)) {
         <?php print($errors['bio'] ? 'class="error"' : '');?>><?php print $values['bio'];?></textarea>
         </label><br />
         
-      <label><input type="checkbox" checked="checked"
+      <label><input type="checkbox"
         name="check" />
         Ознакомился</label>
 

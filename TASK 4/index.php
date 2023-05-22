@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $errors['bodyparts'] = !empty($_COOKIE['bodyparts_error']);
   $errors['ability'] = !empty($_COOKIE['ability_error']);
   $errors['bio'] = !empty($_COOKIE['bio_error']);
+  $errors['check'] = !empty($_COOKIE['check_error']);
 
   if ($errors['fio']) {
     setcookie('fio_error', '', 100000);
@@ -46,6 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     setcookie('bio_error', '', 100000);
     $messages[] = '<div class="error">Заполните биографию.</div>';
   }
+    if ($errors['check']) {
+    setcookie('check_error', '', 100000);
+    $messages[] = '<div class="error">Ознакомьтесь с соглашением.</div>';
+  }
 
   $values = array();
   $values['fio'] = empty($_COOKIE['fio_value']) ? '' : $_COOKIE['fio_value'];
@@ -55,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $values['bodyparts'] = empty($_COOKIE['bodyparts_value']) ? '' : $_COOKIE['bodyparts_value'];
   $values['ability'] = empty($_COOKIE['ability_value']) ? array() : json_decode($_COOKIE['ability_value']);
   $values['bio'] = empty($_COOKIE['bio_value']) ? '' : $_COOKIE['bio_value'];
+  $values['check'] = empty($_COOKIE['check_value']) ? '' : $_COOKIE['check_value'];
 
   include('form.php');
   exit();
@@ -118,10 +124,27 @@ if (empty($_POST['bio']) || !preg_match('/^[0-9A-Za-z0-9А-Яа-я,\.\s]+$/', $_
 else {
   setcookie('bio_value', $_POST['bio'], time() + 30 * 24 * 60 * 60);
 }
+if (!isset($_POST['check'])) {
+    setcookie('check_error', '1', time() + 24 * 60 * 60);
+    $errors = TRUE;
+}
+else {
+  setcookie('check_value', $_POST['check'], time() + 30 * 24 * 60 * 60);
+}
 
 if ($errors) {
-  exit();
+	setcookie('save','',100000);
+    header('Location: index.php');
 }
+    else {
+      setcookie('fio_error', '', 100000);
+      setcookie('email_error', '', 100000);
+      setcookie('year_error', '', 100000);
+      setcookie('gender_error', '', 100000);
+      setcookie('bodyparts_error', '', 100000);
+      setcookie('ability_error', '', 100000);
+	  setcookie('check_error', '', 100000);
+    }
 
 $user = 'u53001';
 $pass = '5486130';
@@ -129,7 +152,7 @@ $db = new PDO('mysql:host=localhost;dbname=u53001', $user, $pass,
   [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); // Заменить test на имя БД, совпадает с логином uXXXXX
 
 try {
-  $stmt = $db->prepare("INSERT INTO application SET name = ?, email = ?, year = ?, gender = ?, bodyparts = ?, biography = ?");
+  $stmt = $db->prepare("INSERT INTO application SET name = ?, email = ?, year = ?, gender = ?, limbs = ?, biography = ?");
   $stmt->execute([$_POST['fio'], $_POST['email'], $_POST['year'], $_POST['gender'], $_POST['bodyparts'], $_POST['bio']]);
   $app_id = $db->lastInsertId();
   $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
@@ -141,5 +164,8 @@ catch(PDOException $e){
   print('Error : ' . $e->getMessage());
   exit();
 }
+    if(!$errors){
+      setcookie('save', '1');
+    }
+header('Location: ./');
 
-header('Location: ?save=1');

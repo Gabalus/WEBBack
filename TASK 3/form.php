@@ -65,7 +65,7 @@
         <textarea name="bio"></textarea>
         </label><br />
         
-      <label><input type="checkbox" checked="checked"
+      <label><input type="checkbox"
         name="check" />
         Ознакомился</label>
 

@@ -49,7 +49,10 @@ if (empty($_POST['ability'])) {
   print('Заполните сферхспособности.<br/>');
   $errors = TRUE;
 }
-
+if (!isset($_POST['check'])) {
+	print('Ознакомьтесь с соглашением.<br/>');
+    $errors = TRUE;
+}
 if ($errors) {
   exit();
 }
