@@ -226,9 +226,9 @@ if ($errors) {
     if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login']) and !$errors) {
     $app_id=$_SESSION['uid'];
     $upd=$db->prepare("update application set name=?,email=?,year=?,gender=?,limbs=?,biography=? where id=?");
-    $upd->execute(array($_POST['fio'],$_POST['email'],$_POST['year'],$_POST['gender'],$_POST['bodyparts'],$_POST['bio'],$id));
+    $upd->execute(array($_POST['fio'],$_POST['email'],$_POST['year'],$_POST['gender'],$_POST['bodyparts'],$_POST['bio'],$app_id));
     $del=$db->prepare("delete from ability_application where application_id=?");
-    $del->execute(array($id));
+    $del->execute(array($app_id));
     $upd1=$db->prepare("insert into ability_application set ability_id=?,application_id=?");
 	  $stmt = $db->prepare("INSERT INTO ability_application SET application_id = ?, ability_id=?");
 	  foreach ($_POST['ability'] as $ability) {
